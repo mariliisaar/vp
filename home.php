@@ -66,8 +66,9 @@
   <p>See leht on tehtud veebiprogrammeerimise kursusel 2020. aasta sügissemestril <a href="https://www.tlu.ee" target="_blank">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
   <p>Lehe avamise hetk: <?php echo $fulltimenow; ?>.</p>
   <p><?php echo "Praegu on " . $partofday . "."; ?></p>
+  <p><?php echo "2020 sügissemester on " . $semesterdurationdays . " päeva pikk."; ?></p>
   <p><?php echo $semesterstatus ?><br />
-  <?php echo "(Läbitud on " . $semesterpercent . "% semestrist)"; ?></p>
+  <?php echo "(Läbitud on " . number_format($semesterpercent, 2) . "% semestrist)"; ?></p>
 
 </body>
 </html>
