@@ -85,7 +85,7 @@
 	// $imghtml .= '<img src="../vp_pics/' . $picfiles[$i] . '" alt="Tallinna Ülikool">';
   // }
 
-  $r = rand(0, $piccount - 1);
+  $r = mt_rand(0, $piccount - 1);
   $imghtml = '<img src="../vp_pics/' . $picfiles[$r] . '" alt="Tallinna Ülikool">';
   
   require("header.php");
