@@ -94,7 +94,11 @@
   <h1><?php echo $username; ?></h1>
   <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>See leht on tehtud veebiprogrammeerimise kursusel 2020. aasta sügissemestril <a href="https://www.tlu.ee" target="_blank">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
-  <p><a href="form.php">Lisa oma mõte</a> | <a href="thoughts.php">Loe varasemaid mõtteid</a></p>
+  <ul>
+	<li><a href="form.php">Lisa oma mõte</a></li>
+	<li><a href="thoughts.php">Loe varasemaid mõtteid</a></li>
+	<li><a href="listfilms.php">Loe filmiinfot</a></li>
+  </ul>
   <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " . $datenow . ". " . $monthnameset[$monthnow - 1] . " ". $yearnow . " " . $timenow; ?>.</p>
   <p><?php echo "Praegu on " . $partofday . "."; ?></p>
   <p><?php echo "2020 sügissemester on " . $semesterdurationdays . " päeva pikk."; ?></p>
