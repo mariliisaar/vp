@@ -28,3 +28,13 @@
 	  $conn->close();
 	  return $filmhtml;
   } //readfilms lõpeb
+  
+  function savefilm($titleinput, $yearinput, $durationinput, $genreinput, $studioinput, $directorinput) {
+	$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
+	$stmt = $conn->prepare("INSERT INTO film (pealkiri, aasta, kestus, zanr, tootja, lavastaja) VALUES(?, ?, ?, ?, ?, ?)");
+	echo $conn->error; // <-- ainult õppimise jaoks!
+	$stmt->bind_param("siisss", $titleinput, $yearinput, $durationinput, $genreinput, $studioinput, $directorinput);
+	$stmt->execute();
+	$stmt->close();
+	$conn->close();
+  } // savefilm lõpeb
