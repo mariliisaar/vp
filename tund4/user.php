@@ -1,7 +1,7 @@
 <?php
 
   require("../../../config.php");
-  require("fnc_films.php");
+  // require("fnc_saveuser.php");
   
   $firstname = "";
   $lastname = "";
