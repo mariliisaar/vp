@@ -99,6 +99,7 @@
 	<li><a href="thoughts.php">Loe varasemaid mõtteid</a></li>
 	<li><a href="listfilms.php">Loe filmiinfot</a></li>
 	<li><a href="addfilms.php">Filmiinfo lisamine</a></li>
+  <li><a href="user.php">Loo kasutaja</a></li>
   </ul>
   <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " . $datenow . ". " . $monthnameset[$monthnow - 1] . " ". $yearnow . " " . $timenow; ?>.</p>
   <p><?php echo "Praegu on " . $partofday . "."; ?></p>
