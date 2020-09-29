@@ -4,6 +4,8 @@
   
   $email = null;
   $formerror = null;
+  $emailerror = null;
+  $pwderror = null;
   
   $username = "Marilii Saar";
   $fulltimenow = date("d.m.Y H:i:s");
@@ -20,11 +22,11 @@
   
   if(isset($_POST["usersubmit"])) {
 	  if(empty($_POST["emailinput"])) {
-        $formerror = "Kasutajatunnus on sisestamata!";
+        $emailerror = "Kasutajatunnus on sisestamata!";
       }
 	  
 	  if(empty($_POST["passwordinput"])) {
-        $formerror = "Salasõna on sisestamata!";
+        $pwderror = "Salasõna on sisestamata!";
       }
   }
 
@@ -114,9 +116,9 @@
   <p>Logi sisse:
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 	<label for="emailinput">Kasutajatunnus (email): </label>
-	<input type="email" name="emailinput" id="emailinput" placeholder="Email" value="<?php echo $email; ?>">
+	<input type="email" name="emailinput" id="emailinput" placeholder="Email" value="<?php echo $email; ?>"><span><?php echo $emailerror . "<br />"; ?></span>
 	<label for="passwordinput">Salasõna: </label>
-	<input type="password" name="passwordinput" id="passwordinput" placeholder="***">
+	<input type="password" name="passwordinput" id="passwordinput" placeholder="***"><span><?php echo $pwderror . "<br />"; ?></span>
 	<span><?php echo $formerror . "<br />"; ?></span>
 	<input type="submit" name="usersubmit" value="Logi sisse">
   </form>
