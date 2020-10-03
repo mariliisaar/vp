@@ -26,7 +26,7 @@
         $emailerror = "Kasutajatunnus on sisestamata!";
       }
     else {
-      $email = test_input($_POST["emailinput"]);
+      $email = filter_var(test_input($_POST["emailinput"]), FILTER_VALIDATE_EMAIL);
     }
 	  
 	  if(empty($_POST["passwordinput"])) {

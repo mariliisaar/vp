@@ -84,7 +84,7 @@
         $emailerror = "E-maili aadress on sisestamata!";
       }
       else {
-        $email = test_input($_POST["emailinput"]);
+        $email = filter_var(test_input($_POST["emailinput"]), FILTER_VALIDATE_EMAIL);
       }
 
       if(strlen($_POST["passwordinput"]) < 8 or strlen($_POST["passwordsecondaryinput"]) < 8) {
