@@ -1,13 +1,14 @@
 <?php
   require("../../../config.php");
   require("fnc_user.php");
+  require("fnc_common.php");
+  $username = "Üliõpilane";
   
   $email = null;
   $formerror = null;
   $emailerror = null;
   $pwderror = null;
   
-  $username = "Marilii Saar";
   $fulltimenow = date("d.m.Y H:i:s");
   $hournow = date("H");
   $partofday = "vaba aeg";
@@ -24,10 +25,28 @@
 	  if(empty($_POST["emailinput"])) {
         $emailerror = "Kasutajatunnus on sisestamata!";
       }
+    else {
+      $email = test_input($_POST["emailinput"]);
+    }
 	  
 	  if(empty($_POST["passwordinput"])) {
         $pwderror = "Salasõna on sisestamata!";
       }
+      if(!empty($_POST["passwordinput"]) and strlen($_POST["passwordinput"]) < 8) {
+        $pwderror = "Liiga lühike salasõna! (" . strlen($_POST["passwordinput"]) . " märki 8 asemel)";
+      }
+
+    if(empty($emailerror) and empty($pwderror)) {
+      $result = signin($email, $_POST["passwordinput"]);
+      // if($result == "OK") {
+      //   $notice = "Sisse logimine õnnestus!";
+      //   $email = "";
+      // }
+      // else {
+        $formerror = $result;
+      // }
+  
+    }
   }
 
   
@@ -94,12 +113,8 @@
 	}
   }
   
-  //paneme kõik pildid ekraanile
+  //paneme suvalise pildi ekraanile
   $piccount = count($picfiles);
-  // $imghtml = "";
-  // for($i = 0; $i < $piccount; $i++) {
-	// $imghtml .= '<img src="../vp_pics/' . $picfiles[$i] . '" alt="Tallinna Ülikool">';
-  // }
 
   $r = mt_rand(0, $piccount - 1);
   $imghtml = '<img src="../vp_pics/' . $picfiles[$r] . '" alt="Tallinna Ülikool">';
@@ -109,7 +124,6 @@
 ?>
 
   <img src="../img/vp_banner.png" alt="Veebiprogrammeerimise kursuse bänner">
-  <h1><?php echo $username; ?></h1>
   <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>See leht on tehtud veebiprogrammeerimise kursusel 2020. aasta sügissemestril <a href="https://www.tlu.ee" target="_blank">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
   <hr />
@@ -124,7 +138,7 @@
   </form>
   </p>
   <br />
-  Või <a href="user.php">loo kasutaja</a>
+  Või <a href="adduser.php">loo kasutaja</a>
   <hr />
   <p>Lehe avamise hetk: <?php echo $weekdaynameset[$weekdaynow - 1] .", " . $datenow . ". " . $monthnameset[$monthnow - 1] . " ". $yearnow . " " . $timenow; ?>.</p>
   <p><?php echo "Praegu on " . $partofday . "."; ?></p>

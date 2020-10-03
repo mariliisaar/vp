@@ -34,7 +34,7 @@
 	  $stmt->bind_param("s", $email);
 	  $stmt->bind_result($passwordfromdb);
 	  
-	  if($stmt->execute) {
+	  if($stmt->execute()) {
 		  // Kui tehniliselt korras
 		  if($stmt->fetch()) {
 			  // Kasutaja leiti

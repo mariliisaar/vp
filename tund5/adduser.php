@@ -123,19 +123,18 @@
 		
       }
   }
-  
-  $username = "Marilii Saar";
 
+  $username = "Üliõpilane";
   require("header.php");
   
   ?>
 
   <img src="../img/vp_banner.png" alt="Veebiprogrammeerimise kursuse bänner">
-  <h1><?php echo $username; ?></h1>
+  <h1>Loo Kasutaja</h1>
   <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>See leht on tehtud veebiprogrammeerimise kursusel 2020. aasta sügissemestril <a href="https://www.tlu.ee" target="_blank">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
   <ul>
-	<li><a href="home.php">Avaleht</a></li>
+	<li><a href="page.php">Avaleht</a></li>
   </ul>
   <hr />
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
