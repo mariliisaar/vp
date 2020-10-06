@@ -130,7 +130,7 @@
   }
   
   function readuserdescription() {
-	  $description = null;
+	  $description = "";
 	  // Kui profiil on olemas, loeb kasutaja lühitutvustuse
 	  $conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
 	  $stmt = $conn->prepare("SELECT description FROM vpuserprofiles WHERE userid = ?");
