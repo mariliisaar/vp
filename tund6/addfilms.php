@@ -19,7 +19,7 @@
 	}
   }
   
-  $username = "Marilii Saar";
+  // $username = "Marilii Saar";
 
   require("header.php");
   
@@ -34,7 +34,7 @@
 	<li><a href="?logout=1">Logi välja!</a></li>
   </ul>
   <hr />
-  <form method="POST">
+  <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 	<label for="titleinput">Filmi pealkiri</label>
 	<input type="text" name="titleinput" id="titleinput" placeholder="Pealkiri">
 	<br />
