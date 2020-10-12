@@ -40,19 +40,16 @@
       <option value="" selected disabled>Vali Isik</option>
       <?php echo personfromdb(); ?>
     </select>
-    <br />
     <label for="movieinput">Film: </label>
     <select name="movieinput" id="movieinput">
       <option value="" selected disabled>Vali Film</option>
       <?php echo moviefromdb(); ?>
     </select>
-    <br />
     <label for="positioninput">Amet: </label>
     <select name="positioninput" id="positioninput">
       <option value="" selected disabled>Vali Amet</option>
       <?php echo positionfromdb(); ?>
     </select>
-    <br />
 	  <input type="submit" name="connectsubmit" value="Salvesta seos">
   </form>
   <p><?php echo $inputerror; ?></p>

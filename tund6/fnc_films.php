@@ -1,5 +1,6 @@
 <?php
   $database = "if20_marilii_sa_1";
+//   $database = "if20_inga_filmibaas_E";
   
   // Funktsioon, mis loeb kõikide filmide info
   function readfilms() {
