@@ -39,8 +39,8 @@
 	} else {
 		$studionotice .= " Vali film!";
 	}
-	if(!empty($_POST["filmstudioinput"])){
-		$selectedstudio = intval($_POST["filmstudioinput"]);
+	if(!empty($_POST["studioinput"])){
+		$selectedstudio = intval($_POST["studioinput"]);
 	} else {
 		$studionotice .= " Vali stuudio!";
 	}
@@ -72,7 +72,7 @@
 		} else {
 			$selectedposition = intval($_POST["positioninput"]);
 			$insertedrole = test_input($_POST["roleinput"]);
-			$personnotice .= " Režissööril ei ole rolli!";
+			$personnotice .= " Ainult näitlejal on roll!";
 		}
 	} else {
 		$personnotice .= " Vali amet!";
@@ -101,15 +101,9 @@
   <h1><?php echo $_SESSION["userfirstname"] ." " .$_SESSION["userlastname"]; ?></h1>
   <p>See veebileht on loodud õppetöö käigus ning ei sisalda mingit tõsiseltvõetavat sisu!</p>
   <p>See leht on tehtud veebiprogrammeerimise kursusel 2020. aasta sügissemestril <a href="https://www.tlu.ee" target="_blank">Tallinna Ülikooli</a> Digitehnoloogiate instituudis.</p>
-  <p><a href="?logout=1">Logi välja!</a></p>
   <ul>
 	<li><a href="home.php">Esilehele</a></li>
-	<li><a href="form.php">Lisa oma mõte</a></li>
-	<li><a href="thoughts.php">Loe varasemaid mõtteid</a></li>
-	<li><a href="listfilms.php">Loe filmiinfot</a></li>
-	<li><a href="addfilms.php">Filmiinfo lisamine</a></li>
-	<li><a href="movieconnect.php">Seoste lisamine</a></li>
-	<li><a href="userprofile.php">Minu kasutajaprofiil</a></li>
+	<li><a href="?logout=1">Logi välja!</a></li>
   </ul>
   <hr />
   <h2>Määrame filmi žanri</h2>
