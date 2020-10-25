@@ -70,7 +70,7 @@
 	  }
 	  
 	  if(!empty($positions)) {
-		  $notice = '<select name="positioninput">' ."\n";
+		  $notice = '<select id ="positions" name="positioninput">' ."\n";
 		  $notice .= '<option value="" selected disabled>Vali amet</option>' ."\n";
 		  $notice .= $positions;
 		  $notice .= "</select> \n";
@@ -165,10 +165,21 @@
   } // readquotetoselect lõpeb
   
   function storenewpersonrelation($personinput, $movieinput, $positioninput, $roleinput) {
+	if(empty($roleinput)) {
+		$roleinput = NULL;
+	}
 	$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
-	$stmt = $conn->prepare("SELECT person_in_movie_id FROM person_in_movie WHERE person_id = ? AND movie_id = ? AND position_id = ?");
-	echo $conn->error; // <-- ainult õppimise jaoks!
-	$stmt->bind_param("iii", $personinput, $movieinput, $positioninput);
+	$SQLsentence = "SELECT person_in_movie_id FROM person_in_movie WHERE person_id = ? AND movie_id = ? AND position_id = ?";
+	if($roleinput === NULL) {
+		$stmt = $conn->prepare($SQLsentence);
+		echo $conn->error; // <-- ainult õppimise jaoks!
+		$stmt->bind_param("iii", $personinput, $movieinput, $positioninput);
+	}
+	else {
+		$stmt = $conn->prepare($SQLsentence ." AND role = ?");
+		echo $conn->error; // <-- ainult õppimise jaoks!
+		$stmt->bind_param("iiis", $personinput, $movieinput, $positioninput, $roleinput);
+	}
 	$stmt->bind_result($idfromdb);
 	$stmt->execute();
 	if($stmt->fetch()) {

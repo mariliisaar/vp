@@ -4,7 +4,7 @@
   function readpersonsinfilm($sortby, $sortorder) {
 	  $notice = "<p>Kahjuks filmitegelasi seoses filmidega ei leitud!</p> \n";
 	  $conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
-	  $SQLsentence = "SELECT first_name, last_name, position_name, role, title, production_year, company_name FROM person JOIN person_in_movie ON person.person_id = person_in_movie.person_id JOIN movie ON movie.movie_id = person_in_movie.movie_id JOIN position ON position.position_id = person_in_movie.position_id JOIN movie_by_production_company ON movie_by_production_company.movie_movie_id = movie.movie_id JOIN production_company ON movie_by_production_company.production_company_id = production_company.production_company_id";
+	  $SQLsentence = "SELECT first_name, last_name, position_name, role, title, production_year, company_name FROM person JOIN person_in_movie ON person.person_id = person_in_movie.person_id JOIN movie ON movie.movie_id = person_in_movie.movie_id JOIN position ON position.position_id = person_in_movie.position_id LEFT JOIN movie_by_production_company ON movie_by_production_company.movie_movie_id = movie.movie_id LEFT JOIN production_company ON movie_by_production_company.production_company_id = production_company.production_company_id";
 
 	  if($sortby == 0 and $sortorder == 0) {
 		  $stmt = $conn->prepare($SQLsentence);

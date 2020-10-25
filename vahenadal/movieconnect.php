@@ -132,9 +132,31 @@
       <?php echo $personselect; ?>
     <label for="positioninput">Amet: </label>
       <?php echo $positionselect; ?>
-	<label for="roleinput">Roll: </label>
-    <input type="text" name="roleinput" id="roleinput" value="<?php echo $insertedrole; ?>">
+	<span id="roleSpan">
+		<label for="roleinput">Roll: </label>
+		<input type="text" name="roleinput" id="roleinput" value="<?php echo $insertedrole; ?>">
+	</span>
 	<input type="submit" name="personfilmsubmit" value="Salvesta seos isikuga"><span><?php echo $personnotice; ?></span>
   </form>
+
+  <script>
+  	const roleSpan = document.getElementById("roleSpan");
+  	const roleInput = document.getElementById("roleinput");
+	const positions = document.getElementById("positions");
+	window.onload = function() {
+		if (positions.value != "1")
+			roleSpan.style.display="none";
+		}
+
+	positions.onchange = function() {
+		if (this[this.selectedIndex].value === "1") {
+			roleSpan.style.display="inline";
+		}
+		else {
+			roleSpan.style.display="none";
+			roleInput.value = "";
+			}
+	};
+  </script>
 </body>
 </html>

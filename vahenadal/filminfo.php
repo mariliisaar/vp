@@ -38,13 +38,13 @@
 	<li><a href="?logout=1">Logi välja!</a></li>
   </ul>
   <br />
-  <a href="#personmovie">Isikud filmis</a> &#124; 
-  <a href="#quotes">Tsitaadid</a> &#124; 
-  <a href="#persons">Isikud</a> &#124; 
-  <a href="#films">Filmid</a> &#124; 
-  <a href="#genres">Žanrid</a> &#124; 
-  <a href="#studios">Filmistuudiod</a> &#124; 
-  <a href="#positions">Ametikohad filmis</a>
+  <!-- <a href="#" onclick="show('personmovie')">Isikud filmis</a> &#124; 
+  <a href="#" onclick="show('quotes')">Tsitaadid</a> &#124; 
+  <a href="#" onclick="show('persons')">Isikud</a> &#124; 
+  <a href="#" onclick="show('films')">Filmid</a> &#124; 
+  <a href="#" onclick="show('genres')">Žanrid</a> &#124; 
+  <a href="#" onclick="show('studios')">Filmistuudiod</a> &#124; 
+  <a href="#" onclick="show('positions')">Ametikohad filmis</a> -->
   <hr />
   <div id="personmovie">
     <h2>Isikud Filmis</h2>
@@ -71,7 +71,7 @@
           $quotesortorder = $_GET["quotesortorder"];
         }
       }
-      echo readquotes($quotesortby, $quotesortorder); 
+      echo readquotes($quotesortby, $quotesortorder);
     ?>
   </div>
   <div id="persons">
@@ -145,5 +145,27 @@
     ?>
   </div>
 
+  <!-- <script>
+    window.onload = show("personmovie");
+    function show(divId) {
+      var divIds = [];
+      var allDivs = document.querySelectorAll("div");
+
+      for (var div of allDivs) {
+        if (div.id) {
+          divIds.push(div.id);
+        }
+      }
+
+      for (i of divIds) {
+        if (i != divId) {
+          document.getElementById(i).style.display = "none";
+        }
+        else {
+          document.getElementById(i).style.display = "block";
+        }
+      }
+    }
+  </script> -->
 </body>
 </html>
