@@ -9,10 +9,12 @@
   $filesizelimit = 1572864; // 1048576
   $photouploaddir_orig = "../photoupload_orig/";
   $photouploaddir_normal = "../photoupload_normal/";
+  $photouploaddir_thumb = "../photoupload_thumb/";
   $filenameprefix = "vp_";
   $filename = null;
   $photomaxwidth = 600;
   $photomaxheight = 400;
+  $thumb = 100;
   
   // Kui klikiti submit, siis ...
   if(isset($_POST["photosubmit"])) {
@@ -55,6 +57,7 @@
 	// Kui vigu pole ...
 	if(empty($inputerror)) {
 		$target = $photouploaddir_normal .$filename;
+		$target_thumb = $photouploaddir_thumb .$filename;
 		// Muudame suurust
 		// Loome pikslikogumi, pildi objekti
 		if($filetype == "jpg") {
@@ -69,7 +72,23 @@
 		// Teeme kindlaks originaalsuuruse
 		$imagew = imagesx($mytempimage);
 		$imageh = imagesy($mytempimage);
+
+		// Thumbnaili alguspunktid ja mõõdud
+		$thumbx = 0;
+		$thumby = 0;
+		$thumbw = $imagew;
+		$thumbh = $imageh;
+
+		if ($imagew > $imageh) {
+			$thumbw = $imageh;
+			$thumbx = round(($imagew - $thumbw) / 2);
+		}
+		else {
+			$thumbh = $imagew;
+			$thumby = round(($imageh - $thumbh) / 2);
+		}	
 		
+
 		if($imagew > $photomaxwidth or $imageh > $photomaxheight) {
 			if($imagew / $photomaxwidth > $imageh / $photomaxheight) {
 				$photosizeratio = $imagew / $photomaxwidth;
@@ -81,17 +100,24 @@
 			$neww = round($imagew / $photosizeratio);
 			$newh = round($imageh / $photosizeratio);
 			
+			
 			// Teeme uue pikslikogumi
 			$mynewtempimage = imagecreatetruecolor($neww, $newh);
+			$mynewthumbimage = imagecreatetruecolor($thumb, $thumb);
 			// Kirjutame järelejäävad pikslid uuele pildile
 			imagecopyresampled($mynewtempimage, $mytempimage, 0, 0, 0, 0, $neww, $newh, $imagew, $imageh);
+			// Thumbnail
+			imagecopyresampled($mynewthumbimage, $mytempimage, 0, 0, $thumbx, $thumby, $thumb, $thumb, $thumbw, $thumbh);
 			// Salvestame faili
-			$notice = saveimage($mynewtempimage, $filetype, $target);
+			$notice = saveimage($mynewtempimage, $filetype, $target, $target_thumb, $mynewthumbimage);
 			imagedestroy($mynewtempimage);
+			imagedestroy($mynewthumbimage);
 		}
 		else {
 			// Kui pole suurust vaja muuta
-			$notice = saveimage($mytempimage, $filetype, $target);
+			$mynewthumbimage = imagecreatetruecolor($thumb, $thumb);
+			imagecopyresampled($mynewthumbimage, $mytempimage, 0, 0, $thumbx, $thumby, $thumb, $thumb, $thumbw, $thumbh);
+			$notice = saveimage($mytempimage, $filetype, $target, $target_thumb, $mynewthumbimage);
 		}
 		imagedestroy($mytempimage);
 		
@@ -104,11 +130,17 @@
 	}	
   }
   
-  function saveimage($mynewtempimage, $filetype, $target) {
+  function saveimage($mynewtempimage, $filetype, $target, $target_thumb, $mynewthumbimage) {
 	$notice = null;
 	if($filetype == "jpg") {
 		if(imagejpeg($mynewtempimage, $target, 90)) {
 			$notice = "Vähendatud pildi salvestamine õnnestus! ";
+			if(imagejpeg($mynewthumbimage, $target_thumb, 90)) {
+				$notice .= "Thumbnaili salvestamine õnnestus! ";
+			}
+			else {
+				$notice .= "Thumbnaili salvestamisel tekkis tõrge! ";
+			}
 		}
 		else {
 			$notice = "Vähendatud pildi salvestamisel tekkis tõrge! ";
@@ -117,6 +149,12 @@
 	if($filetype == "png") {
 		if(imagepng($mynewtempimage, $target, 6)) {
 			$notice = "Vähendatud pildi salvestamine õnnestus! ";
+			if(imagejpeg($mynewthumbimage, $target_thumb, 6)) {
+				$notice .= "Thumbnaili salvestamine õnnestus! ";
+			}
+			else {
+				$notice .= "Thumbnaili salvestamisel tekkis tõrge! ";
+			}
 		}
 		else {
 			$notice = "Vähendatud pildi salvestamisel tekkis tõrge! ";
@@ -125,6 +163,12 @@
 	if($filetype == "gif") {
 		if(imagegif($mynewtempimage, $target)) {
 			$notice = "Vähendatud pildi salvestamine õnnestus! ";
+			if(imagejpeg($mynewthumbimage, $target_thumb)) {
+				$notice .= "Thumbnaili salvestamine õnnestus! ";
+			}
+			else {
+				$notice .= "Thumbnaili salvestamisel tekkis tõrge! ";
+			}
 		}
 		else {
 			$notice = "Vähendatud pildi salvestamisel tekkis tõrge! ";
