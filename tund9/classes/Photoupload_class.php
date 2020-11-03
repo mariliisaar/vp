@@ -10,21 +10,18 @@
 		
 		function __construct($photoinput) { // konstruktori muutuja
 			$this->photoinput = $photoinput;
-			//var_dump($this->photoinput);
-			// $this->imageType();
 		} // construct
 		
 		function __destruct() {
-			$result = $this->imageType();
-			if($result == 1) {
+			if(isset($this->mytempimage)) {
 				imagedestroy($this->mytempimage);
 			}
 		}
 		
 		public function imageType() {
+			$notice = null;
 			// Kas on pilt
 			$check = getimagesize($this->photoinput["tmp_name"]);
-			$notice = null;
 			// Kui jah, siis mis tüüpi + loo pildifail
 			if($check !== false){
 				if($check["mime"] == "image/jpeg"){
