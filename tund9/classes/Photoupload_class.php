@@ -4,16 +4,55 @@
 		private $photofiletype;
 		private $mytempimage;
 		private $mynewtempimage;
+		private $timestamp;
+		private $filenameprefix = "vp_";
+		private $filename;
 		
-		function __construct($photoinput, $filetype) { // konstruktori muutuja
+		function __construct($photoinput) { // konstruktori muutuja
 			$this->photoinput = $photoinput;
 			//var_dump($this->photoinput);
-			$this->photofiletype = $filetype;
-			$this->createImageFromFile();
+			// $this->imageType();
 		} // construct
 		
 		function __destruct() {
-			imagedestroy($this->mytempimage);
+			$result = $this->imageType();
+			if($result == 1) {
+				imagedestroy($this->mytempimage);
+			}
+		}
+		
+		public function imageType() {
+			// Kas on pilt
+			$check = getimagesize($this->photoinput["tmp_name"]);
+			$notice = null;
+			// Kui jah, siis mis tüüpi + loo pildifail
+			if($check !== false){
+				if($check["mime"] == "image/jpeg"){
+					$this->photofiletype = "jpg";
+				}
+				if($check["mime"] == "image/png"){
+					$this->photofiletype = "png";
+				}
+				if($check["mime"] == "image/gif"){
+					$this->photofiletype = "gif";
+				}
+				$notice = 1;
+				$this->createImageFromFile();
+			} else {
+				$notice = 0;
+			}
+			return $notice;
+		}
+		
+		public function getSize() {
+			$size = $this->photoinput["size"];
+			return $size;
+		}
+		
+		public function setFilename() {
+			$this->timestamp = microtime(1) * 10000;
+			$this->filename = $this->filenameprefix .$this->timestamp ."." .$this->photofiletype;
+			return $this->filename;
 		}
 		
 		private function createImageFromFile() {
@@ -71,6 +110,19 @@
 			imagecopyresampled($this->mynewtempimage, $this->mytempimage, 0, 0, $cutx, $cuty, $neww, $newh, $cutsizew, $cutsizeh);
 		}
 		
+		public function addWatermark($wmfile) {
+			if(isset($this->mynewtempimage)) {
+				$watermark = imagecreatefrompng($wmfile);
+				$wmw = imagesx($watermark);
+				$wmh = imagesy($watermark);
+				$wmx = imagesx($this->mynewtempimage) - $wmw - 10;
+				$wmy = imagesy($this->mynewtempimage) - $wmh - 10;
+				// kopeerime vesimärgi vähendatud pildile
+				imagecopy($this->mynewtempimage, $watermark, $wmx, $wmy, 0, 0, $wmw, $wmh);
+				imagedestroy($watermark);
+			}
+		}
+		
 		public function saveimage($target){
 			$notice = null;
 			if($this->photofiletype == "jpg"){
@@ -95,6 +147,15 @@
 				}
 			}
 			imagedestroy($this->mynewtempimage);
+			return $notice;
+		}
+		
+		public function saveOriginal($target) {
+			if(move_uploaded_file($this->photoinput["tmp_name"], $target)){
+				$notice = 1;
+			} else {
+				$notice = 0;
+			}
 			return $notice;
 		}
 		
