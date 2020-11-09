@@ -6,10 +6,11 @@
 		private $mynewtempimage;
 		private $timestamp;
 		private $filenameprefix = "vp_";
-		private $filename;
+		public $filename;
 		
 		function __construct($photoinput) { // konstruktori muutuja
 			$this->photoinput = $photoinput;
+			// var_dump($photoinput);
 		} // construct
 		
 		function __destruct() {
@@ -18,20 +19,15 @@
 			}
 		}
 		
-		public function imageType() {
+		public function imageType($photoFileTypes) {
 			$notice = null;
 			// Kas on pilt
 			$check = getimagesize($this->photoinput["tmp_name"]);
 			// Kui jah, siis mis tüüpi + loo pildifail
-			if($check !== false){
-				if($check["mime"] == "image/jpeg"){
+			if(in_array($check["mime"], $photoFileTypes)){
+				$this->photofiletype = substr($check["mime"], -3);
+				if ($this->photofiletype == "peg") {
 					$this->photofiletype = "jpg";
-				}
-				if($check["mime"] == "image/png"){
-					$this->photofiletype = "png";
-				}
-				if($check["mime"] == "image/gif"){
-					$this->photofiletype = "gif";
 				}
 				$notice = 1;
 				$this->createImageFromFile();
@@ -41,15 +37,36 @@
 			return $notice;
 		}
 		
-		public function getSize() {
+		public function getSize($filesizelimit) {
+			$notice = 0;
 			$size = $this->photoinput["size"];
-			return $size;
+			if ($size > $filesizelimit) {
+				return $notice;
+			}
+			else {
+				return $size;
+			}
 		}
 		
-		public function setFilename() {
+		public function setFilename($prefix = "", $suffix = "") {
+			if ($prefix == "") {
+				$prefix = $this->filenameprefix;
+			}
+			if ($suffix == "") {
+				$suffix = $this->photofiletype;
+			}
 			$this->timestamp = microtime(1) * 10000;
-			$this->filename = $this->filenameprefix .$this->timestamp ."." .$this->photofiletype;
+			$this->filename = $prefix .$this->timestamp ."." .$suffix;
 			return $this->filename;
+		}
+
+		public function file_exists($dir, $name) {
+			if(file_exists($dir .$name)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		
 		private function createImageFromFile() {

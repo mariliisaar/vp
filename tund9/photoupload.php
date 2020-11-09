@@ -2,21 +2,14 @@
   require("usesession.php");
 
   require("../../../config.php");
+  require("../../../photo_config.php");
   require("fnc_photo.php");
   require("fnc_common.php");
   require("classes/Photoupload_class.php");
     
   $inputerror = "";
   $notice = null;
-  $filesizelimit = 2097152; //1048576;
-  $photouploaddir_orig = "../photoupload_orig/";
-  $photouploaddir_normal = "../photoupload_normal/";
-  $photouploaddir_thumb = "../photoupload_thumb/";
-  $watermark = "../img/vp_logo_w100_overlay.png";
   $filename = null;
-  $photomaxwidth = 600;
-  $photomaxheight = 400;
-  $thumbsize = 100;
   $privacy = 1;
   $alttext = null;
     
@@ -31,12 +24,12 @@
 	$myphoto = new Photoupload($_FILES["photoinput"]);
 	
 	// Kas on pilt
-	if($myphoto->imageType() == 0){
+	if($myphoto->imageType($photoFileTypes) == 0){
 		$inputerror = "Valitud fail ei ole pilt! ";
 	}
 	
 	//kas on sobiva failisuurusega
-	if(empty($inputerror) and $myphoto->getSize() > $filesizelimit){
+	if(empty($inputerror) and $myphoto->getSize($filesizelimit) == 0){
 		$inputerror = "Liiga suur fail!";
 	}
 	
@@ -44,8 +37,8 @@
 	$filename = $myphoto->setFilename();
 	
 	//ega fail äkki olemas pole
-	if(file_exists($photouploaddir_orig .$filename)){
-		$inputerror = "Selle nimega fail on juba olemas!";
+	if($myphoto->file_exists($photouploaddir_orig, $filename)){
+		$inputerror = "Sellise nimega fail on juba olemas!";
 	}
 	
 	//kui vigu pole ...
