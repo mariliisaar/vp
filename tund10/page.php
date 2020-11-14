@@ -4,8 +4,10 @@
   require("classes/SessionManager.class.php");
   SessionManager::sessionStart("vp_ms", 0, "/~marisaa/", "greeny.cs.tlu.ee");
   require("../../../config.php");
+  require("../../../photo_config.php");
   require("fnc_user.php");
   require("fnc_common.php");
+  require("fnc_photo.php");
   // $username = "Marilii Saar";
   
   $email = null;
@@ -127,6 +129,8 @@
 
   $r = mt_rand(0, $piccount - 1);
   $imghtml = '<img src="../vp_pics/' . $picfiles[$r] . '" alt="Tallinna Ülikool">';
+
+  $newestphoto = readNewestPublicPhoto();
   
   require("header.php");
   
@@ -155,6 +159,9 @@
   <br />
   Või <a href="adduser.php">loo kasutaja</a>
   <hr />
+  <h3>Uusim avalik pilt:</h3>
+  <?php echo $newestphoto; ?>
+  <h3>Suvaline pilt Tallinna Ülikoolist:</h3>
   <?php echo $imghtml; ?>
 
 </body>
