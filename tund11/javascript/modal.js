@@ -13,6 +13,7 @@ window.onload = function(){
 		allThumbs[i].addEventListener("click", openModal);
 	}
 	document.getElementById("modalclose").addEventListener("click", closeModal);
+	document.getElementById("modalimg").addEventListener("click", closeModal);
 	document.getElementById("storeRating").addEventListener("click", storeRating);
 }
 
@@ -23,9 +24,9 @@ function openModal(e){
 	}
 	// modalimg.src = photodir + e.target.dataset.fn;
 
-	modalimg.src = "showphoto.php?photo=" + e.target.dataset.fn;
-	
 	photoid = e.target.dataset.id;
+	modalimg.src = "showphoto.php?photo=" + photoid;
+	
 	modalimg.alt = e.target.alt;
 	captiontext.innerHTML = e.target.alt;
 	modal.style.display = "block";
