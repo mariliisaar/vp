@@ -8,6 +8,7 @@
   require("fnc_user.php");
   require("fnc_common.php");
   require("fnc_photo.php");
+  require("fnc_news.php");
   // $username = "Marilii Saar";
   
   $email = null;
@@ -131,6 +132,7 @@
   $imghtml = '<img src="../vp_pics/' . $picfiles[$r] . '" alt="Tallinna Ülikool">';
 
   $newestphoto = readNewestPublicPhoto();
+  $latestnews = readLatestNews();
   
   require("header.php");
   
@@ -159,6 +161,8 @@
   <br />
   Või <a href="adduser.php">loo kasutaja</a>
   <hr />
+  <h3>Viimased uudised:</h3>
+  <?php echo $latestnews; ?>
   <h3>Uusim avalik pilt:</h3>
   <?php echo $newestphoto; ?>
   <h3>Suvaline pilt Tallinna Ülikoolist:</h3>
