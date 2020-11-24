@@ -9,7 +9,7 @@
   $tolink .= '<link rel="stylesheet" type="text/css" href="style/modal.css">' ."\n";
   $tolink .= '<script src="javascript/modal.js" defer></script>' ."\n";
 
-  $gallerypagelimit = 5;
+  $gallerypagelimit = 16;
   $page = 1;
   $photocount = countPublicPhotos(2);
   if(!isset($_GET["page"]) or $_GET["page"] < 1) {

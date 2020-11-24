@@ -44,6 +44,7 @@
   <li><a href="photogallery_public.php">Avalike fotode galerii</a></li>
   <li><a href="photogallery_private.php">Minu isiklike fotode galerii</a></li>
   <li><a href="photogallery_userpublic.php">Minu avalike fotode galerii</a></li>
+  <li><a href="addnews.php">Uudise lisamine</a></li>
   <li><a href="?logout=1">Logi välja!</a></li>
   </ul>
   <hr />
