@@ -2,10 +2,11 @@
   require("usesession.php");
 
   require("../../../config.php");
-//   require("../../../photo_config.php");
+  require("../../../photo_config.php");
   require("fnc_news.php");
+  require("fnc_photo.php");
   require("fnc_common.php");
-//   require("classes/Photoupload_class.php");
+  require("classes/Photoupload_class.php");
 
   $tolink = "\t" .'<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>' ."\n";
   $tolink .= "\t" .'<script>tinymce.init({selector:"textarea#newsinput", plugins: "link", menubar: "edit",});</script>' ."\n";
@@ -23,6 +24,8 @@
   $day = $tempdate->format("d");
   $month = $tempdate->format("m");
   $year = $tempdate->format("Y");
+  $filename = null;
+  $alttext = null;
     
   //kui klikiti submit, siis ...
   if(isset($_POST["newssubmit"])){
@@ -60,19 +63,70 @@
       $inputerror .= " Kuupäev ei ole reaalne!";
     }
 
+    if(!empty($_FILES["photoinput"]["name"])){
+      $alttext = test_input($_POST["altinput"]);
+      $myphoto = new Photoupload($_FILES["photoinput"]);
+
+      // Kas on pilt
+      if($myphoto->imageType($photoFileTypes) == 0){
+        $inputerror = "Valitud fail ei ole pilt! ";
+      }
+      
+      //kas on sobiva failisuurusega
+      if(empty($inputerror) and $myphoto->getSize($filesizelimit) == 0){
+        $inputerror = "Liiga suur fail!";
+      }
+      
+      //anname failile nime
+      $filename = $myphoto->setFilename();
+      
+      //ega fail äkki olemas pole
+      if($myphoto->file_exists($photouploaddir_orig, $filename)){
+        $inputerror = "Sellise nimega fail on juba olemas!";
+      }
+    }
+    
     if(empty($inputerror)) {
+      if(!empty($_FILES["photoinput"]["name"])){
+        // teeme pildi väiksemaks
+        $myphoto->resizePhoto($photomaxwidth, $photomaxheight, true);
+        // lisame vesimärgi
+        $myphoto->addWatermark($watermark);
+        // salvestame vähendatud pildi
+        $result = $myphoto->saveimage($photouploaddir_news .$filename);
+        if($result == 1){
+          $notice .= " Pildi salvestamine õnnestus! ";
+        } else {
+          $inputerror .= " Pildi salvestamisel tekkis tõrge! ";
+        }
+        unset($myphoto);
+      }
+
+      if(empty($inputerror) and !empty($_FILES["photoinput"]["name"])){
+        $result = storeNewsPhotoData($filename, $alttext);
+        if($result == 1){
+          $notice .= " Pildi info lisati andmebaasi!";
+          $alttext = null;
+        } else {
+          $inputerror .= " Pildi info andmebaasi salvestamisel tekkis tõrge!";
+          $filename = null;
+        }
+      }
+
       // uudis salvestada
-      $result = storeNews($newstitle, $news, $expire);
-			if($result == 1){
-				$notice .= " Uudis salvestatud!";
-				$news = null;
-        $newstitle = null;
-			} else {
-				$inputerror .= " Uudise salvestamisel tekkis tõrge!";
-			}
-    } else {
-			$inputerror .= " Tekkinud vigade tõttu uudist ei salvestatud!";
-		}
+      if(empty($inputerror)){
+        $result = storeNews($newstitle, $news, $expire, $filename);
+        if($result == 1){
+          $notice .= " Uudis salvestatud!";
+          $news = null;
+          $newstitle = null;
+        } else {
+          $inputerror .= " Uudise salvestamisel tekkis tõrge!";
+        }
+      } else {
+        $inputerror .= " Tekkinud vigade tõttu uudist ei salvestatud!";
+      }
+    }
   }  
 
   require("header.php");
@@ -137,6 +191,12 @@
     <br /><br />
     <label for="newsinput">Kirjuta uudis</label>
     <textarea id="newsinput" name="newsinput"><?php echo $news; ?></textarea>
+    <br>
+    <label for="photoinput">Lisa uudisele pilt</label>
+    <input id="photoinput" name="photoinput" type="file">
+    <br>
+    <label for="altinput">Lisa pildi lühikirjeldus (alternatiivtekst)</label>
+    <input id="altinput" name="altinput" type="text" value="<?php echo $alttext; ?>">
     <br>
     <input type="submit" id="newssubmit" name="newssubmit" value="Salvesta uudis">
   </form>
