@@ -1,0 +1,36 @@
+.newscontainer {
+    display: flex;
+    margin: 20px;
+}
+
+.newsimg {
+    width: 300px;
+    margin-right: 20px;
+}
+
+.newsimg > img {
+    max-width: 100%;
+}
+
+.newscontent {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.newsmain {
+    flex-grow: 1;
+}
+
+.newstitle {
+    margin-top: 0;
+}
+
+.created {
+    font-size: 0.75em;
+}
+
+.newsmeta {
+    font-size: 0.75em;
+    flex-shrink: 0;
+}
