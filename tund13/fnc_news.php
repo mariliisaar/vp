@@ -33,33 +33,25 @@
 		return $notice;
 	}
 
-	function updateNews($newsid, $newstitle, $news, $expire, $filename){
+	function updateNews($newsid, $newstitle, $news, $expire, $filename, $alttext){
 		$notice = null;
 		$photoid = null;
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
-		// if ($filename != null) {
-		// 	$stmt = $conn->prepare("SELECT vpnewsphotos_id FROM vpnewsphotos WHERE filename = ? AND deleted IS NULL");
-		// 	echo $conn->error; // <-- ainult õppimise jaoks!
-		// 	$stmt->bind_param("s", $filename);
-		// 	$stmt->bind_result($idfromdb);
-		// 	$stmt->execute();
-		// 	if($stmt->fetch()) {
-		// 		$photoid = $idfromdb;
-		// 	}
-		// 	else {
-		// 		$notice = 0;
-		// 	}
-		// 	$stmt->close();
-		// }
-		// $stmt = $conn->prepare("UPDATE vpnews SET title = ?, content = ?, expire = ?, photoid = ?, modified = ?, modified_by = ? WHERE vpnews_id = ?");
-		$stmt = $conn->prepare("UPDATE vpnews SET title = ?, content = ?, expire = ?, modified = now(), modified_by = ? WHERE vpnews_id = ?");
+		if (!empty($filename)) {
+			$stmt = $conn->prepare("INSERT INTO vpnewsphotos (userid, filename, alttext) VALUES(?, ?, ?)");
+			echo $conn->error; // <-- ainult õppimise jaoks!
+			$stmt->bind_param("iss", $_SESSION["userid"], $filename, $alttext);
+			if ($stmt->execute()) {
+				$photoid = $conn->insert_id;
+			}
+			$stmt->close();
+		}
+		$stmt = $conn->prepare("UPDATE vpnews SET title = ?, content = ?, expire = ?, photoid = ?, modified = now(), modified_by = ? WHERE vpnews_id = ?");
 		echo $conn->error;
-		// $stmt->bind_param("sssisii", $newstitle, $news, $expire, $photoid, $modified, $_SESSION["userid"], $newsid);
-		$stmt->bind_param("sssii", $newstitle, $news, $expire, $_SESSION["userid"], $newsid);
+		$stmt->bind_param("sssiii", $newstitle, $news, $expire, $photoid, $_SESSION["userid"], $newsid);
 		if($stmt->execute()){
 			$notice = 1;
 		} else {
-			//echo $stmt->error;
 			$notice = 0;
 		}
 		$stmt->close();
@@ -102,13 +94,16 @@
 
 	function readNewsEdit() {
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
-		$stmt = $conn->prepare("SELECT vpnews.vpnews_id, firstname, lastname, title, content, vpnewsphotos_id, alttext, expire, vpnews.added, modified FROM vpnews JOIN vpusers ON vpnews.userid = vpusers.vpusers_id LEFT JOIN vpnewsphotos ON vpnews.photoid = vpnewsphotos.vpnewsphotos_id WHERE expire >= CURDATE() AND vpnews.deleted IS NULL ORDER BY vpnews_id ASC");
+		$stmt = $conn->prepare("SELECT vpnews.vpnews_id, firstname, lastname, title, content, vpnewsphotos_id, alttext, expire, vpnews.added, modified, vpnews.deleted FROM vpnews JOIN vpusers ON vpnews.userid = vpusers.vpusers_id LEFT JOIN vpnewsphotos ON vpnews.photoid = vpnewsphotos.vpnewsphotos_id WHERE expire >= CURDATE() ORDER BY vpnews_id ASC");
 		echo $conn->error;
-		$stmt->bind_result($newsidfromdb, $firstnamefromdb, $lastnamefromdb, $titlefromdb, $contentfromdb, $photoidfromdb, $alttextfromdb, $expirefromdb, $addedfromdb, $modifiedfromdb);
+		$stmt->bind_result($newsidfromdb, $firstnamefromdb, $lastnamefromdb, $titlefromdb, $contentfromdb, $photoidfromdb, $alttextfromdb, $expirefromdb, $addedfromdb, $modifiedfromdb, $deleted);
 		if($stmt->execute()) {
 			$temphtml = null;
 			while ($stmt->fetch()) {
 				$temphtml .= "\t" .'<div class="newscontainer">' ."\n";
+				if (!empty($deleted)) {
+					$temphtml .= "\t\t" .'<div class="deleted">' ."</div>\n";
+				}				
 				if ($photoidfromdb != null) {
 					$temphtml .= "\t\t" .'<div class="newsimg">' ."\n";
 					$temphtml .= "\t\t\t" .'<img src="' ."shownewsphoto.php?photo=" .$photoidfromdb .'" alt="' .$alttextfromdb .'">' ."\n";
@@ -128,7 +123,13 @@
 				$temphtml .= "\t\t\t\t<p>Uudis aegub: " .$expirefromdb ."</p>\n";
 				$temphtml .= "\t\t\t\t<p>Autor: " .$firstnamefromdb ." " .$lastnamefromdb ."</p>\n";
 				$temphtml .="\t\t\t</div>\n";
-				$temphtml .="\t\t\t" .'<a href="editnews.php?id=' .$newsidfromdb .'">' ."Muuda uudist</a>\n";
+				$temphtml .="\t\t\t<p " .'class="restore"><a href="editnews.php?id=' .$newsidfromdb .'">' ."Muuda uudist</a> | \n";
+				if ($deleted != null) {
+					$temphtml .= '<a href="restorenews.php?id=' .$newsidfromdb .'">' ."Taasta uudis</a></p>\n";
+				}
+				else {
+					$temphtml .= '<a href="deletenews.php?id=' .$newsidfromdb .'">' ."Kustuta uudis</a></p>\n";
+				}
 				$temphtml .="\t\t</div>\n";
 				$temphtml .="\t</div>\n";
 			}
@@ -150,14 +151,14 @@
 
 	function readNews($id) {
 		$conn = new mysqli($GLOBALS["serverhost"], $GLOBALS["serverusername"], $GLOBALS["serverpassword"], $GLOBALS["database"]);
-		$stmt = $conn->prepare("SELECT firstname, lastname, title, content, vpnewsphotos_id, alttext, expire, vpnews.added, modified FROM vpnews JOIN vpusers ON vpnews.userid = vpusers.vpusers_id LEFT JOIN vpnewsphotos ON vpnews.photoid = vpnewsphotos.vpnewsphotos_id WHERE vpnews.vpnews_id = ? AND vpnews.deleted IS NULL");
+		$stmt = $conn->prepare("SELECT firstname, lastname, title, content, vpnewsphotos_id, alttext, expire, vpnews.added, modified, vpnews.deleted FROM vpnews JOIN vpusers ON vpnews.userid = vpusers.vpusers_id LEFT JOIN vpnewsphotos ON vpnews.photoid = vpnewsphotos.vpnewsphotos_id WHERE vpnews.vpnews_id = ?");
 		echo $conn->error;
 		$stmt->bind_param("i", $id);
-		$stmt->bind_result($firstnamefromdb, $lastnamefromdb, $titlefromdb, $contentfromdb, $photoidfromdb, $alttextfromdb, $expirefromdb, $addedfromdb, $modifiedfromdb);
+		$stmt->bind_result($firstnamefromdb, $lastnamefromdb, $titlefromdb, $contentfromdb, $photoidfromdb, $alttextfromdb, $expirefromdb, $addedfromdb, $modifiedfromdb, $deleted);
 		if($stmt->execute()) {
 			$datafromdb = null;
 			if ($stmt->fetch()) {
-				$datafromdb = array("firstname"=>$firstnamefromdb, "lastname"=>$lastnamefromdb, "title"=>$titlefromdb, "content"=>$contentfromdb, "photoid"=>$photoidfromdb, "alttext"=>$alttextfromdb, "expire"=>$expirefromdb, "added"=>$addedfromdb, "modified"=>$modifiedfromdb);
+				$datafromdb = array("firstname"=>$firstnamefromdb, "lastname"=>$lastnamefromdb, "title"=>$titlefromdb, "content"=>$contentfromdb, "photoid"=>$photoidfromdb, "alttext"=>$alttextfromdb, "expire"=>$expirefromdb, "added"=>$addedfromdb, "modified"=>$modifiedfromdb, "deleted"=>$deleted);
 			}
 			if(!empty($datafromdb)) {
 				$return = $datafromdb;

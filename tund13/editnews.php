@@ -17,6 +17,7 @@
   $newsdata = readNews($id);
   $inputerror = "";
   $notice = null;
+  $deleted = $newsdata["deleted"];
   $news = $newsdata["content"];
   $newstitle = $newsdata["title"];
   $year = substr($newsdata["expire"], 0, 4);
@@ -24,7 +25,17 @@
   $day = substr($newsdata["expire"], 8, 2);
   $filename = null;
   $alttext = $newsdata["alttext"];
-  $newsimg = ""; //TODO!!
+  $newsimg = "";
+  
+  if (!empty($newsdata["photoid"])) {
+    $newsimg .= '<label for="photoinput">Uudisele lisatud pilt:</label>';
+    $newsimg = '<img src="' ."shownewsphoto.php?photo=" .$newsdata["photoid"] .'" alt="' .$alttext .'">' ."\n\t<br />\n";
+    $newsimg .= '<label for="photoinput">Muuda pilti:</label>';
+  }  
+  else {
+    $newsimg .= "<p>Sellel uudisel ei ole pilti</p>";
+    $newsimg .= '<label for="photoinput">Lisa pilt:</label>';
+  }
                     
   //kui klikiti submit, siis ...
   if(isset($_POST["newssubmit"])){
@@ -101,20 +112,9 @@
         unset($myphoto);
       }
 
-      if(empty($inputerror) and !empty($_FILES["photoinput"]["name"])){
-        $result = storeNewsPhotoData($filename, $alttext);
-        if($result == 1){
-          $notice .= " Pildi info lisati andmebaasi!";
-          $alttext = null;
-        } else {
-          $inputerror .= " Pildi info andmebaasi salvestamisel tekkis tõrge!";
-          $filename = null;
-        }
-      }
-
       // uudis salvestada
-      if(empty($inputerror)){
-        $result = updateNews($id, $newstitle, $news, $expire, $filename);
+      if(empty($inputerror) and !empty($_FILES["photoinput"]["name"])){
+        $result = updateNews($id, $newstitle, $news, $expire, $filename, $alttext);
         if($result == 1){
           $notice .= " Uudis uuendatud!";
         } else {
@@ -140,6 +140,12 @@
   </ul>
   
   <hr>
+  <?php 
+    if (!empty($deleted)) {
+      echo '<h2><span class="danger">NB!</span> See uudis on kustutatud!</h2><h3><a href="restorenews.php?id=' .$id ."&e=true" .'">Taasta uudis</a></h3>';
+    }
+    
+  ?>
   
   <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])."?id=" .$id;?>" enctype="multipart/form-data">
     <label for="newstitleinput">Uudise pealkiri</label>
@@ -190,9 +196,7 @@
     <label for="newsinput">Uudise sisu</label>
     <textarea id="newsinput" name="newsinput"><?php echo $news; ?></textarea>
     <br>
-    <label for="photoinput">Uudisele lisatud pilt:</label>
     <?php echo $newsimg ?>
-    <label for="photoinput">Muuda pilti:</label>
     <input id="photoinput" name="photoinput" type="file">
     <br>
     <label for="altinput">Pildi lühikirjeldus (alternatiivtekst)</label>

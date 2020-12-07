@@ -1,5 +1,5 @@
 <?php
-    // require("usesession.php");
+    require("usesession.php");
     require("../../../config.php");
     require("../../../photo_config.php");
 
