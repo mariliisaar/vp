@@ -46,6 +46,8 @@
   <li><a href="photogallery_userpublic.php">Minu avalike fotode galerii</a></li>
   <li><a href="addnews.php">Uudise lisamine</a></li>
   <li><a href="allnews.php">Uudise muutmine / kustutamine</a></li>
+  <li><a href="../konsultatsioon/home.php">Viljaveo kokkuvõte</a></li>
+  <li><a href="../konsultatsioon/insert.php">Viljaveo sisestamine</a></li>
   <li><a href="?logout=1">Logi välja!</a></li>
   </ul>
   <hr />
