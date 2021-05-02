@@ -1,19 +1,23 @@
 .galleryarea
 {
-	width: 80%;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
 }
 
 .thumbgallery
 {
-	width: 100px;
+	width: 110px;
 	height: 200px;
 	padding: 5px;
 	float: left;
-	margin-right: 5px;
+	margin-right: 25px;
 }
 
 .thumbs
 {
+	max-width: 100%;
     border-radius: 5px;
     cursor: pointer;
 	opacity: 0.7;
